@@ -1,0 +1,21 @@
+{
+  "name": "app-bff",
+  "version": "1.0.0",
+  "description": "React app with Node.js BFF - tokens stored server-side",
+  "main": "server/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "build:client": "cd client && npm run build",
+    "install:all": "npm install && cd client && npm install"
+  },
+  "dependencies": {
+    "fastify": "^4.24.3",
+    "@fastify/static": "^6.12.0",
+    "@fastify/cookie": "^9.2.0",
+    "@fastify/formbody": "^7.4.0",
+    "openid-client": "^5.6.4",
+    "uuid": "^9.0.1"
+  }
+}

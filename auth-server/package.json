@@ -1,0 +1,15 @@
+{
+  "name": "auth-server",
+  "version": "1.0.0",
+  "description": "OIDC Provider for PoC authentication architecture",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "dependencies": {
+    "oidc-provider": "^8.4.6",
+    "express": "^4.18.2"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "api-server",
+  "version": "1.0.0",
+  "description": "Fastify API server with JWT validation",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "dependencies": {
+    "fastify": "^4.24.3",
+    "@fastify/cors": "^8.4.1",
+    "jose": "^5.2.0"
+  }
+}

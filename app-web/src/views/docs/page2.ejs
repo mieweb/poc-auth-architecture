@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configuration - Documentation</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; min-height: 100vh; }
+    .layout { display: flex; min-height: 100vh; }
+    .sidebar { width: 250px; background: #0f3460; color: white; padding: 20px; }
+    .sidebar h2 { margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.2); }
+    .sidebar nav a { display: block; color: white; text-decoration: none; padding: 10px; border-radius: 6px; margin-bottom: 5px; }
+    .sidebar nav a:hover, .sidebar nav a.active { background: rgba(255,255,255,0.1); }
+    .sidebar nav a.active { background: #e94560; }
+    .main { flex: 1; padding: 30px; }
+    .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #ddd; }
+    .user-badge { display: flex; align-items: center; gap: 10px; background: white; padding: 8px 15px; border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .card { background: white; border-radius: 10px; padding: 25px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+    .card h1 { color: #0f3460; margin-bottom: 15px; }
+    .btn { padding: 8px 16px; background: #e94560; color: white; border-radius: 6px; text-decoration: none; font-size: 14px; }
+    pre { background: #1a1a2e; color: #fff; padding: 15px; border-radius: 6px; overflow-x: auto; margin: 15px 0; }
+    code { font-family: 'Monaco', 'Menlo', monospace; }
+    table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+    th { background: #f8f9fa; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h2>📚 Documentation</h2>
+      <nav>
+        <a href="/docs">Home</a>
+        <a href="/docs/page1">Getting Started</a>
+        <a href="/docs/page2" class="active">Configuration</a>
+        <a href="/docs/api-demo">API Demo</a>
+      </nav>
+      <div style="margin-top: auto; padding-top: 30px;">
+        <a href="/" style="color: rgba(255,255,255,0.7); text-decoration: none;">← Back to Home</a>
+      </div>
+    </aside>
+    
+    <main class="main">
+      <div class="header-bar">
+        <h2>Configuration</h2>
+        <div class="user-badge">
+          <span>👤 <%= user.email %></span>
+          <a href="/auth/logout" class="btn">Logout</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h1>⚙️ Configuration</h1>
+        <p style="color: #666; line-height: 1.6;">
+          Configure the authentication settings for your application.
+        </p>
+
+        <h3 style="margin-top: 20px;">Environment Variables</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Variable</th>
+              <th>Description</th>
+              <th>Default</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>AUTH_SERVER</code></td>
+              <td>OIDC provider URL</td>
+              <td>http://localhost:4000</td>
+            </tr>
+            <tr>
+              <td><code>API_SERVER</code></td>
+              <td>Protected API URL</td>
+              <td>http://localhost:5000</td>
+            </tr>
+            <tr>
+              <td><code>CLIENT_ID</code></td>
+              <td>OIDC client identifier</td>
+              <td>app-web</td>
+            </tr>
+            <tr>
+              <td><code>SESSION_SECRET</code></td>
+              <td>Secret for session cookies</td>
+              <td>(random)</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 style="margin-top: 20px;">Example Configuration</h3>
+        <pre><code># .env file
+AUTH_SERVER=http://localhost:4000
+API_SERVER=http://localhost:5000
+CLIENT_ID=app-web
+CLIENT_SECRET=your-secret-here
+SESSION_SECRET=super-secret-key</code></pre>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

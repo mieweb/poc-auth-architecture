@@ -1,0 +1,20 @@
+{
+  "name": "app-web",
+  "version": "1.0.0",
+  "description": "Traditional server-rendered web app with protected routes",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "dependencies": {
+    "fastify": "^4.24.3",
+    "@fastify/cookie": "^9.2.0",
+    "@fastify/formbody": "^7.4.0",
+    "@fastify/view": "^8.2.0",
+    "ejs": "^3.1.9",
+    "openid-client": "^5.6.4",
+    "uuid": "^9.0.1"
+  }
+}

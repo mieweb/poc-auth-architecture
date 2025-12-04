@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Demo - Documentation</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; min-height: 100vh; }
+    .layout { display: flex; min-height: 100vh; }
+    .sidebar { width: 250px; background: #0f3460; color: white; padding: 20px; }
+    .sidebar h2 { margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.2); }
+    .sidebar nav a { display: block; color: white; text-decoration: none; padding: 10px; border-radius: 6px; margin-bottom: 5px; }
+    .sidebar nav a:hover, .sidebar nav a.active { background: rgba(255,255,255,0.1); }
+    .sidebar nav a.active { background: #e94560; }
+    .main { flex: 1; padding: 30px; }
+    .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #ddd; }
+    .user-badge { display: flex; align-items: center; gap: 10px; background: white; padding: 8px 15px; border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .card { background: white; border-radius: 10px; padding: 25px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+    .card h1 { color: #0f3460; margin-bottom: 15px; }
+    .btn { padding: 8px 16px; background: #e94560; color: white; border-radius: 6px; text-decoration: none; font-size: 14px; }
+    pre { background: #1a1a2e; color: #fff; padding: 15px; border-radius: 6px; overflow-x: auto; margin: 15px 0; }
+    code { font-family: 'Monaco', 'Menlo', monospace; }
+    .success { background: #d4edda; border: 1px solid #c3e6cb; padding: 15px; border-radius: 6px; color: #155724; }
+    .error { background: #f8d7da; border: 1px solid #f5c6cb; padding: 15px; border-radius: 6px; color: #721c24; }
+    .data-item { padding: 12px; background: #f8f9fa; border-radius: 6px; margin-bottom: 8px; display: flex; justify-content: space-between; }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h2>📚 Documentation</h2>
+      <nav>
+        <a href="/docs">Home</a>
+        <a href="/docs/page1">Getting Started</a>
+        <a href="/docs/page2">Configuration</a>
+        <a href="/docs/api-demo" class="active">API Demo</a>
+      </nav>
+      <div style="margin-top: auto; padding-top: 30px;">
+        <a href="/" style="color: rgba(255,255,255,0.7); text-decoration: none;">← Back to Home</a>
+      </div>
+    </aside>
+    
+    <main class="main">
+      <div class="header-bar">
+        <h2>API Demo</h2>
+        <div class="user-badge">
+          <span>👤 <%= user.email %></span>
+          <a href="/auth/logout" class="btn">Logout</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h1>🔌 API Integration Demo</h1>
+        <p style="color: #666; line-height: 1.6;">
+          This page demonstrates the server calling the protected API using your access token.
+          The token is stored in your server-side session and never exposed to the browser.
+        </p>
+      </div>
+
+      <div class="card">
+        <h3>API Response from <code>http://localhost:5001/api/data</code></h3>
+        
+        <% if (apiError) { %>
+          <div class="error" style="margin-top: 15px;">
+            <strong>Error:</strong> <%= apiError %>
+          </div>
+        <% } else if (apiData) { %>
+          <div class="success" style="margin-top: 15px;">
+            <strong>✅ Successfully fetched data!</strong>
+          </div>
+          
+          <h4 style="margin-top: 20px;">Items:</h4>
+          <% apiData.items.forEach(function(item) { %>
+            <div class="data-item">
+              <span>📦 <%= item.name %></span>
+              <span style="color: #999;">ID: <%= item.id %></span>
+            </div>
+          <% }); %>
+
+          <h4 style="margin-top: 20px;">Requested By (from token):</h4>
+          <pre><code><%= JSON.stringify(apiData.requestedBy, null, 2) %></code></pre>
+        <% } %>
+      </div>
+
+      <div class="card">
+        <h3>🔒 Security Note</h3>
+        <p style="color: #666; line-height: 1.6;">
+          The API call was made <strong>server-side</strong>. Your browser never sees the access token.
+          This is a key security benefit of the traditional web app pattern - tokens are kept 
+          entirely on the server.
+        </p>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

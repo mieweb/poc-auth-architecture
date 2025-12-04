@@ -13,6 +13,11 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
+# Kill any existing services on our ports
+echo -e "${YELLOW}🧹 Cleaning up any existing services...${NC}"
+lsof -ti:4000,5001,3000,3001,3002 | xargs kill -9 2>/dev/null || true
+sleep 1
+
 # Cleanup function
 cleanup() {
     echo ""

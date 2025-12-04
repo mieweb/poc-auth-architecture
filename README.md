@@ -143,18 +143,28 @@ Browser                  Web Server              Auth Server      API Server
 ### Installation
 
 ```bash
-# Clone the repository (if applicable)
-cd poc-auth-architecture
+# Install all dependencies
+./scripts/install.sh
+```
 
-# Install dependencies for all services
+### Running the Services
+
+```bash
+# Start all services (Ctrl+C to stop)
+./scripts/start.sh
+```
+
+### Manual Installation (Alternative)
+
+```bash
 cd auth-server && npm install && cd ..
 cd api-server && npm install && cd ..
-cd app-bff && npm install && cd app-bff/client && npm install && cd ../..
+cd app-bff && npm install && cd app-bff/client && npm install && npm run build && cd ../..
 cd app-spa && npm install && cd ..
 cd app-web && npm install && cd ..
 ```
 
-### Running the Services
+### Manual Start (Alternative)
 
 Open 5 terminal windows and run each service:
 
@@ -165,8 +175,8 @@ cd auth-server && npm run dev
 # Terminal 2: API Server
 cd api-server && npm run dev
 
-# Terminal 3: BFF App (build client first, then run)
-cd app-bff/client && npm run build && cd .. && npm run dev
+# Terminal 3: BFF App
+cd app-bff && npm run dev
 
 # Terminal 4: SPA App
 cd app-spa && npm run dev
@@ -260,9 +270,29 @@ poc-auth-architecture/
 │       ├── index.js       # Server with auth middleware
 │       └── views/         # EJS templates
 │
-├── docker-compose.yml     # (Optional) Container orchestration
+├── docker-compose.yml     # Container orchestration
+├── scripts/
+│   ├── install.sh         # Install all dependencies
+│   └── start.sh           # Start all services
 └── README.md              # This file
 ```
+
+## 🐳 Docker Setup (Alternative)
+
+You can also run all services using Docker Compose:
+
+```bash
+# Build and start all services
+docker-compose up --build
+
+# Run in background
+docker-compose up -d --build
+
+# Stop all services
+docker-compose down
+```
+
+**Note:** When using Docker, the services communicate via Docker networking. The ports remain the same and are exposed to your host machine.
 
 ## 🔧 Troubleshooting
 

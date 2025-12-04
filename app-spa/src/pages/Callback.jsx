@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext.jsx';
 
@@ -30,9 +30,16 @@ function Callback() {
   const navigate = useNavigate();
   const { handleCallback } = useAuth();
   const [error, setError] = useState(null);
+  const processedRef = useRef(false);
 
   useEffect(() => {
     async function processCallback() {
+      // Prevent double-processing (React StrictMode runs effects twice)
+      if (processedRef.current) {
+        return;
+      }
+      processedRef.current = true;
+
       const code = searchParams.get('code');
       const state = searchParams.get('state');
       const errorParam = searchParams.get('error');

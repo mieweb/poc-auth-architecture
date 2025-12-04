@@ -10,10 +10,10 @@ await fastify.register(cors, {
   credentials: true,
 });
 
-// JWKS from auth-server
-const JWKS = createRemoteJWKSet(new URL('http://localhost:4000/jwks'));
-const ISSUER = 'http://localhost:4000';
-const AUDIENCE = 'enterprise-api';
+// JWKS from auth-server (supports Docker via env vars)
+const AUTH_SERVER_URL = process.env.AUTH_SERVER || 'http://localhost:4000';
+const JWKS = createRemoteJWKSet(new URL(`${AUTH_SERVER_URL}/jwks`));
+const ISSUER = 'http://localhost:4000'; // Issuer must match token, always localhost for browser
 
 // JWT validation middleware
 async function validateToken(request, reply) {
@@ -29,7 +29,7 @@ async function validateToken(request, reply) {
   try {
     const { payload } = await jwtVerify(token, JWKS, {
       issuer: ISSUER,
-      audience: AUDIENCE,
+      audience: 'http://localhost:5001',
     });
 
     // Attach user info to request
@@ -39,7 +39,7 @@ async function validateToken(request, reply) {
       name: payload.name,
     };
   } catch (error) {
-    fastify.log.error('Token validation error:', error.message);
+    fastify.log.error('Token validation error: %s', error.message);
     reply.code(401).send({ error: 'unauthorized', message: 'Invalid or expired token' });
     return;
   }

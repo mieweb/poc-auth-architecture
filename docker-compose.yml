@@ -1,19 +1,27 @@
-version: '3.8'
-
 services:
   auth-server:
     build: ./auth-server
     ports:
       - "4000:4000"
+    environment:
+      - ISSUER=http://localhost:4000
     networks:
       - poc-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:4000/.well-known/openid-configuration"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   api-server:
     build: ./api-server
     ports:
       - "5001:5001"
+    environment:
+      - AUTH_SERVER=http://auth-server:4000
     depends_on:
-      - auth-server
+      auth-server:
+        condition: service_healthy
     networks:
       - poc-network
 
@@ -21,9 +29,15 @@ services:
     build: ./app-bff
     ports:
       - "3000:3000"
+    environment:
+      - AUTH_SERVER=http://auth-server:4000
+      - AUTH_SERVER_PUBLIC=http://localhost:4000
+      - API_SERVER=http://api-server:5001
     depends_on:
-      - auth-server
-      - api-server
+      auth-server:
+        condition: service_healthy
+      api-server:
+        condition: service_started
     networks:
       - poc-network
 
@@ -32,8 +46,10 @@ services:
     ports:
       - "3001:3001"
     depends_on:
-      - auth-server
-      - api-server
+      auth-server:
+        condition: service_healthy
+      api-server:
+        condition: service_started
     networks:
       - poc-network
 
@@ -41,9 +57,15 @@ services:
     build: ./app-web
     ports:
       - "3002:3002"
+    environment:
+      - AUTH_SERVER=http://auth-server:4000
+      - AUTH_SERVER_PUBLIC=http://localhost:4000
+      - API_SERVER=http://api-server:5001
     depends_on:
-      - auth-server
-      - api-server
+      auth-server:
+        condition: service_healthy
+      api-server:
+        condition: service_started
     networks:
       - poc-network
 

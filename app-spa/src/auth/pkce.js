@@ -37,7 +37,6 @@ export const OIDC_CONFIG = {
   clientId: 'app-spa',
   redirectUri: 'http://localhost:3001/callback',
   scope: 'openid profile email',
-  resource: 'enterprise-api',
 };
 
 // Build authorization URL
@@ -58,7 +57,6 @@ export async function buildAuthorizationUrl() {
     state,
     code_challenge: codeChallenge,
     code_challenge_method: 'S256',
-    resource: OIDC_CONFIG.resource,
   });
 
   return `${OIDC_CONFIG.authority}/auth?${params.toString()}`;

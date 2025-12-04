@@ -10,9 +10,12 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const fastify = Fastify({ logger: true });
 
-// Configuration
-const AUTH_SERVER = 'http://localhost:4000';
-const API_SERVER = 'http://localhost:5001';
+// Configuration (supports Docker via env vars)
+// AUTH_SERVER: for server-to-server calls (discovery, token exchange)
+// AUTH_SERVER_PUBLIC: for browser redirects (authorization URL)
+const AUTH_SERVER = process.env.AUTH_SERVER || 'http://localhost:4000';
+const AUTH_SERVER_PUBLIC = process.env.AUTH_SERVER_PUBLIC || 'http://localhost:4000';
+const API_SERVER = process.env.API_SERVER || 'http://localhost:5001';
 const CLIENT_ID = 'app-web';
 const CLIENT_SECRET = 'web-secret-key-for-poc';
 const REDIRECT_URI = 'http://localhost:3002/auth/callback';
@@ -95,13 +98,17 @@ fastify.get('/auth/login', async (request, reply) => {
 
   pkceStore.set(state, codeVerifier);
 
-  const authUrl = oidcClient.authorizationUrl({
-    scope: 'openid profile email',
+  let authUrl = oidcClient.authorizationUrl({
+    scope: 'openid',
     state,
     code_challenge: codeChallenge,
     code_challenge_method: 'S256',
-    resource: 'enterprise-api',
   });
+
+  // Replace internal auth server URL with public URL for browser redirect
+  if (AUTH_SERVER !== AUTH_SERVER_PUBLIC) {
+    authUrl = authUrl.replace(AUTH_SERVER, AUTH_SERVER_PUBLIC);
+  }
 
   return reply.redirect(authUrl);
 });

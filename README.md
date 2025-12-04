@@ -2,6 +2,24 @@
 
 A proof-of-concept monorepo demonstrating multiple authentication patterns using a shared OIDC server.
 
+## ✅ Implementation Status
+
+All three authentication patterns are **fully implemented and tested**:
+
+| Pattern | Status | Notes |
+|---------|--------|-------|
+| **BFF Pattern** (app-bff) | ✅ Complete | Server-side tokens, HttpOnly cookies, proxied API calls |
+| **SPA + PKCE** (app-spa) | ✅ Complete | Public client, in-memory tokens, direct API calls, CORS configured |
+| **Traditional Web** (app-web) | ✅ Complete | Server-rendered, protected routes, session-based auth |
+
+### Tested Flows
+- ✅ Login/logout for all three apps
+- ✅ JWT access tokens with proper claims (sub, email, name)
+- ✅ ID token claims in SPA (profile/email scopes)
+- ✅ Protected API calls from all three clients
+- ✅ CORS for SPA direct API access
+- ✅ Session management with HttpOnly cookies
+
 ## 🏗️ Architecture Overview
 
 ```
@@ -205,13 +223,62 @@ cd app-web && npm run dev
 
 ## 📋 Acceptance Criteria Checklist
 
+### Repository Structure
 - [x] Monorepo with `auth-server`, `api-server`, `app-bff`, `app-spa`, `app-web`
-- [x] `auth-server`: Issues JWT tokens, 3 clients registered
-- [x] `api-server`: Validates JWTs, serves `/api/data`, returns 401 on invalid token
-- [x] `app-bff`: BFF pattern with tokens server-side, browser has session cookie only
-- [x] `app-spa`: Authorization Code + PKCE, tokens in memory, direct API calls
-- [x] `app-web`: Protected `/docs/*` routes, server-side sessions, server-rendered pages
 - [x] Root `README.md` with documentation
+- [x] Scripts for easy install/start (`./scripts/install.sh`, `./scripts/start.sh`)
+- [x] Docker Compose setup with Dockerfiles for all services
+
+### auth-server (OIDC Provider)
+- [x] Issuer: `http://localhost:4000`
+- [x] OIDC discovery: `/.well-known/openid-configuration`
+- [x] JWKS endpoint for token validation
+- [x] Authorization Code + PKCE support
+- [x] In-memory user store with test user (`test@example.com` / `password123`)
+- [x] JWT access tokens with claims: `iss`, `sub`, `aud`, `exp`, `iat`, `email`, `name`
+- [x] JWT ID tokens with profile/email claims
+- [x] 3 clients registered: `app-bff`, `app-spa`, `app-web`
+- [x] CORS configured for SPA client
+
+### api-server (Fastify API)
+- [x] Listens on: `http://localhost:5001`
+- [x] `GET /api/data` returns JSON data
+- [x] JWT validation via JWKS
+- [x] Validates `iss === "http://localhost:4000"`
+- [x] Validates signature, `exp`
+- [x] Returns 401 on invalid/missing token
+- [x] CORS enabled for SPA access
+
+### app-bff (React + Node BFF)
+- [x] Runs on: `http://localhost:3000`
+- [x] `GET /auth/login` - redirects to OIDC authorize
+- [x] `GET /auth/callback` - exchanges code for tokens
+- [x] Tokens stored in server-side session (never reach browser)
+- [x] HttpOnly session cookie
+- [x] `GET /api/data` - proxies to API with Bearer token
+- [x] React UI with login button and data display
+- [x] User info displayed after login
+
+### app-spa (Pure React SPA)
+- [x] Runs on: `http://localhost:3001`
+- [x] Authorization Code + PKCE flow implemented in JS
+- [x] `code_verifier` + `code_challenge` generation
+- [x] Public client (no client secret)
+- [x] Tokens stored in memory (React state) only
+- [x] Direct API calls with Bearer token
+- [x] User email/name from ID token displayed
+- [x] Double-render protection for React StrictMode
+
+### app-web (Traditional Web App)
+- [x] Runs on: `http://localhost:3002`
+- [x] Protected `/docs/*` routes with auth middleware
+- [x] `GET /auth/login` - OIDC flow as confidential client
+- [x] `GET /auth/callback` - token exchange + session creation
+- [x] HttpOnly session cookie
+- [x] Server-rendered HTML pages (EJS templates)
+- [x] User info displayed on protected pages
+- [x] API demo page showing server-side API calls
+- [x] Logout endpoint
 
 ## 🛡️ Security Considerations
 

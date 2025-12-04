@@ -19,6 +19,6 @@
   },
   "homepage": "https://github.com/mieweb/poc-auth-architecture#readme",
   "devDependencies": {
-    "@playwright/test": "^1.57.0"
+    "@playwright/test": "^1.52.0"
   }
 }

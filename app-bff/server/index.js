@@ -144,12 +144,40 @@ fastify.get('/auth/callback', async (request, reply) => {
   }
 });
 
+// Local logout - clears BFF session only, keeps OIDC session for SSO
 fastify.get('/auth/logout', async (request, reply) => {
   const sessionId = request.cookies.bff_session;
   if (sessionId) {
     sessions.delete(sessionId);
   }
   reply.clearCookie('bff_session');
+  return reply.redirect('/');
+});
+
+// Full logout - clears BFF session AND ends OIDC session (logs out of all apps)
+fastify.get('/auth/logout/full', async (request, reply) => {
+  const sessionId = request.cookies.bff_session;
+  let idToken = null;
+  
+  if (sessionId && sessions.has(sessionId)) {
+    idToken = sessions.get(sessionId).idToken;
+    sessions.delete(sessionId);
+  }
+  reply.clearCookie('bff_session');
+
+  // Redirect to OIDC end session endpoint
+  if (oidcClient && idToken) {
+    let endSessionUrl = oidcClient.endSessionUrl({
+      id_token_hint: idToken,
+      post_logout_redirect_uri: 'http://localhost:3000',
+    });
+    // Replace internal auth server URL with public URL for browser redirect
+    if (AUTH_SERVER !== AUTH_SERVER_PUBLIC) {
+      endSessionUrl = endSessionUrl.replace(AUTH_SERVER, AUTH_SERVER_PUBLIC);
+    }
+    return reply.redirect(endSessionUrl);
+  }
+  
   return reply.redirect('/');
 });
 

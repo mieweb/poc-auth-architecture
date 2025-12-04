@@ -139,6 +139,10 @@ function App() {
     window.location.href = '/auth/logout';
   }
 
+  function handleFullLogout() {
+    window.location.href = '/auth/logout/full';
+  }
+
   if (loading) {
     return (
       <div style={styles.container}>
@@ -172,8 +176,16 @@ function App() {
               <button
                 style={{ ...styles.button, ...styles.logoutButton }}
                 onClick={handleLogout}
+                title="Logout from this app only (SSO session remains)"
               >
                 Logout
+              </button>
+              <button
+                style={{ ...styles.button, ...styles.logoutButton, marginLeft: '10px' }}
+                onClick={handleFullLogout}
+                title="Logout from all apps (ends SSO session)"
+              >
+                Logout All Apps
               </button>
             </div>
           </div>

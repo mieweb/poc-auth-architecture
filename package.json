@@ -1,0 +1,24 @@
+{
+  "name": "poc-auth-architecture",
+  "version": "1.0.0",
+  "description": "A proof-of-concept monorepo demonstrating multiple authentication patterns using a shared OIDC server.",
+  "type": "module",
+  "scripts": {
+    "test": "npx playwright test",
+    "test:ui": "npx playwright test --ui"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mieweb/poc-auth-architecture.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mieweb/poc-auth-architecture/issues"
+  },
+  "homepage": "https://github.com/mieweb/poc-auth-architecture#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.57.0"
+  }
+}

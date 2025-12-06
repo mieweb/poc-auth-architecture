@@ -10,15 +10,17 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const fastify = Fastify({ logger: true });
 
-// Configuration (supports Docker via env vars)
+// Configuration (supports Docker and SSL via env vars)
 // AUTH_SERVER: for server-to-server calls (discovery, token exchange)
 // AUTH_SERVER_PUBLIC: for browser redirects (authorization URL)
+// WEB_URL: this app's public URL (for redirect URIs)
 const AUTH_SERVER = process.env.AUTH_SERVER || 'http://localhost:4000';
 const AUTH_SERVER_PUBLIC = process.env.AUTH_SERVER_PUBLIC || 'http://localhost:4000';
 const API_SERVER = process.env.API_SERVER || 'http://localhost:5001';
+const WEB_URL = process.env.WEB_URL || 'http://localhost:3002';
 const CLIENT_ID = 'app-web';
 const CLIENT_SECRET = 'web-secret-key-for-poc';
-const REDIRECT_URI = 'http://localhost:3002/auth/callback';
+const REDIRECT_URI = `${WEB_URL}/auth/callback`;
 
 // In-memory session store
 const sessions = new Map();

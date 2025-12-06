@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useAuth } from '../auth/AuthContext.jsx';
+import { OIDC_CONFIG } from '../auth/pkce.js';
 
-const API_SERVER = 'http://localhost:5001';
+const API_SERVER = OIDC_CONFIG.apiServer;
 
 const styles = {
   card: {

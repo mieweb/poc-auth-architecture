@@ -1,0 +1,4 @@
+# SSL certificates - generated locally, not committed
+local.crt
+local.key
+*.pem

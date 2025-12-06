@@ -64,6 +64,11 @@ class Account {
   }
 }
 
+// URL configuration - supports both local development and SSL mode
+const BFF_URL = process.env.BFF_URL || 'http://localhost:3000';
+const SPA_URL = process.env.SPA_URL || 'http://localhost:3001';
+const WEB_URL = process.env.WEB_URL || 'http://localhost:3002';
+
 export const configuration = {
   // Account lookup - required for oidc-provider to find user accounts
   findAccount: Account.findAccount,
@@ -73,16 +78,16 @@ export const configuration = {
     {
       client_id: 'app-bff',
       client_secret: 'bff-secret-key-for-poc',
-      redirect_uris: ['http://localhost:3000/auth/callback'],
-      post_logout_redirect_uris: ['http://localhost:3000'],
+      redirect_uris: [`${BFF_URL}/auth/callback`],
+      post_logout_redirect_uris: [BFF_URL],
       grant_types: ['authorization_code', 'refresh_token'],
       response_types: ['code'],
       token_endpoint_auth_method: 'client_secret_basic',
     },
     {
       client_id: 'app-spa',
-      redirect_uris: ['http://localhost:3001/callback'],
-      post_logout_redirect_uris: ['http://localhost:3001'],
+      redirect_uris: [`${SPA_URL}/callback`],
+      post_logout_redirect_uris: [SPA_URL],
       grant_types: ['authorization_code', 'refresh_token'],
       response_types: ['code'],
       scope: 'openid profile email',
@@ -91,8 +96,8 @@ export const configuration = {
     {
       client_id: 'app-web',
       client_secret: 'web-secret-key-for-poc',
-      redirect_uris: ['http://localhost:3002/auth/callback'],
-      post_logout_redirect_uris: ['http://localhost:3002'],
+      redirect_uris: [`${WEB_URL}/auth/callback`],
+      post_logout_redirect_uris: [WEB_URL],
       grant_types: ['authorization_code', 'refresh_token'],
       response_types: ['code'],
       token_endpoint_auth_method: 'client_secret_basic',

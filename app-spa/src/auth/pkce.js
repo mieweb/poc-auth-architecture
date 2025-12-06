@@ -31,11 +31,13 @@ export function generateState() {
   return base64UrlEncode(array);
 }
 
-// OIDC Configuration
+// OIDC Configuration - supports SSL mode via Vite env vars
+// Use VITE_* prefix for client-side environment variables
 export const OIDC_CONFIG = {
-  authority: 'http://localhost:4000',
+  authority: import.meta.env.VITE_AUTH_SERVER || 'http://localhost:4000',
   clientId: 'app-spa',
-  redirectUri: 'http://localhost:3001/callback',
+  redirectUri: `${import.meta.env.VITE_SPA_URL || 'http://localhost:3001'}/callback`,
+  apiServer: import.meta.env.VITE_API_SERVER || 'http://localhost:5001',
   scope: 'openid profile email',
 };
 

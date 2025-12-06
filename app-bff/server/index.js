@@ -9,15 +9,17 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const fastify = Fastify({ logger: true });
 
-// Configuration (supports Docker via env vars)
+// Configuration (supports Docker and SSL via env vars)
 // AUTH_SERVER: for server-to-server calls (discovery, token exchange)
 // AUTH_SERVER_PUBLIC: for browser redirects (authorization URL)
+// BFF_URL: this app's public URL (for redirect URIs)
 const AUTH_SERVER = process.env.AUTH_SERVER || 'http://localhost:4000';
 const AUTH_SERVER_PUBLIC = process.env.AUTH_SERVER_PUBLIC || 'http://localhost:4000';
 const API_SERVER = process.env.API_SERVER || 'http://localhost:5001';
+const BFF_URL = process.env.BFF_URL || 'http://localhost:3000';
 const CLIENT_ID = 'app-bff';
 const CLIENT_SECRET = 'bff-secret-key-for-poc';
-const REDIRECT_URI = 'http://localhost:3000/auth/callback';
+const REDIRECT_URI = `${BFF_URL}/auth/callback`;
 
 // In-memory session store
 const sessions = new Map();
@@ -169,7 +171,7 @@ fastify.get('/auth/logout/full', async (request, reply) => {
   if (oidcClient && idToken) {
     let endSessionUrl = oidcClient.endSessionUrl({
       id_token_hint: idToken,
-      post_logout_redirect_uri: 'http://localhost:3000',
+      post_logout_redirect_uri: BFF_URL,
     });
     // Replace internal auth server URL with public URL for browser redirect
     if (AUTH_SERVER !== AUTH_SERVER_PUBLIC) {

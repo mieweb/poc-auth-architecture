@@ -2,6 +2,64 @@
 
 A proof-of-concept monorepo demonstrating multiple authentication patterns using a shared OIDC server.
 
+## 🎓 What is This Project?
+
+This project demonstrates **three different ways** to add authentication (login/logout) to web applications, all sharing the same identity provider (OIDC server). It's designed to help developers understand the trade-offs between different authentication architectures.
+
+### Key Concepts Explained
+
+| Term | What It Means |
+|------|---------------|
+| **OIDC** | OpenID Connect - a standard protocol for authentication built on top of OAuth 2.0 |
+| **JWT** | JSON Web Token - a secure, signed token containing user identity claims |
+| **Access Token** | A token that grants access to protected APIs |
+| **ID Token** | A token containing user identity information (name, email, etc.) |
+| **PKCE** | Proof Key for Code Exchange - extra security for public clients |
+| **SSO** | Single Sign-On - log in once, access multiple apps |
+
+### The Three Patterns
+
+#### 1. 🔐 BFF (Backend-for-Frontend) - `app-bff` on port 3000
+
+**Best for:** Maximum security when you can run a backend server
+
+The BFF pattern keeps all tokens on the server side. The browser only gets an HttpOnly session cookie that links to the tokens stored in server memory. Even if an attacker exploits an XSS vulnerability, they cannot steal the access tokens.
+
+**How it works:**
+- User clicks "Login" → redirected to auth server
+- After login, tokens are stored on the BFF server (never sent to browser)
+- Browser receives only a session cookie
+- API requests go through the BFF, which adds the Bearer token
+
+#### 2. 📱 SPA with PKCE - `app-spa` on port 3001
+
+**Best for:** Pure frontend apps without a dedicated backend
+
+The SPA (Single Page Application) handles authentication entirely in the browser using PKCE for security. Tokens are stored in memory (React state) and lost on page refresh.
+
+**How it works:**
+- App generates a cryptographic code verifier and challenge
+- User logs in at auth server with the challenge
+- App exchanges the authorization code + verifier for tokens
+- Tokens stored in browser memory, used directly for API calls
+
+#### 3. 🌐 Traditional Web App - `app-web` on port 3002
+
+**Best for:** Server-rendered pages, documentation sites, admin panels
+
+Classic server-side rendering where the server handles authentication and renders protected HTML pages. Similar to BFF but renders pages server-side instead of serving a SPA.
+
+**How it works:**
+- Protected routes check for valid session
+- Unauthenticated users are redirected to login
+- Server fetches data from API and renders HTML
+
+### Logout Options
+
+The BFF app demonstrates two types of logout:
+- **"Logout"** - Ends the local session only (SSO remains active for quick re-login)
+- **"Logout All Apps"** - Ends the OIDC session (requires credentials on next login)
+
 ## ✅ Implementation Status
 
 All three authentication patterns are **fully implemented and tested**:

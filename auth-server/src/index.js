@@ -3,11 +3,21 @@ import Provider from 'oidc-provider';
 import { toNodeHandler } from 'better-auth/node';
 import { configuration } from './config.js';
 import { betterAuthInstance } from './better-auth.js';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const PORT = 4000;
 const ISSUER = `http://localhost:${PORT}`;
 
 const app = express();
+
+// Serve the better-auth demo page
+app.get('/demo', (req, res) => {
+  res.sendFile(join(__dirname, 'demo.html'));
+});
 
 // Mount better-auth routes BEFORE body parsing middleware
 // This adds social login, 2FA, and additional auth features
@@ -25,6 +35,7 @@ app.listen(PORT, () => {
   console.log(`🔐 Auth Server (OIDC Provider + Better Auth) running at ${ISSUER}`);
   console.log(`   OIDC Discovery: ${ISSUER}/.well-known/openid-configuration`);
   console.log(`   Better Auth API: ${ISSUER}/better-auth/*`);
+  console.log(`   Better Auth Demo: ${ISSUER}/demo`);
   console.log(`   Test user: test@example.com / password123`);
   console.log(`   Features: Social Sign-in (GitHub, Google), 2FA`);
 });

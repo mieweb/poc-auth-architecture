@@ -43,3 +43,8 @@ playwright-report/
 # Misc
 .cache/
 *.tgz
+
+# Better Auth Database
+auth-server/better-auth.db
+auth-server/better-auth.db-shm
+auth-server/better-auth.db-wal

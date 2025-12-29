@@ -20,11 +20,12 @@ app.get('/demo', (req, res) => {
 });
 
 // Mount better-auth routes BEFORE body parsing middleware
-// This adds social login, 2FA, and additional auth features
+// Better-auth handles its own request parsing and validation
 app.all('/better-auth/*', toNodeHandler(betterAuthInstance));
 
-// Parse JSON bodies for other routes
-app.use(express.json());
+// Parse JSON bodies for other routes with size limit
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
 const provider = new Provider(ISSUER, configuration);
 

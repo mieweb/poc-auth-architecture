@@ -15,6 +15,8 @@ const db = new Database(dbPath);
 db.pragma('journal_mode = WAL');
 
 // Initialize better-auth
+// Note: A separate auth.ts file exists for the Better-Auth CLI tool.
+// This file contains the actual runtime configuration used by the server.
 export const auth = betterAuth({
   database: db,
   
@@ -27,15 +29,16 @@ export const auth = betterAuth({
   },
   
   // Social providers configuration
+  // Note: Providers are only enabled when valid credentials are provided
   socialProviders: {
     github: {
-      clientId: process.env.GITHUB_CLIENT_ID || 'demo-client-id',
-      clientSecret: process.env.GITHUB_CLIENT_SECRET || 'demo-client-secret',
+      clientId: process.env.GITHUB_CLIENT_ID || '',
+      clientSecret: process.env.GITHUB_CLIENT_SECRET || '',
       enabled: !!process.env.GITHUB_CLIENT_ID,
     },
     google: {
-      clientId: process.env.GOOGLE_CLIENT_ID || 'demo-client-id',
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || 'demo-client-secret',
+      clientId: process.env.GOOGLE_CLIENT_ID || '',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
       enabled: !!process.env.GOOGLE_CLIENT_ID,
     },
   },
@@ -53,6 +56,14 @@ export const auth = betterAuth({
     updateAge: 60 * 60, // 1 hour
   },
 });
+
+// Log warnings if social providers are not configured
+if (!process.env.GITHUB_CLIENT_ID) {
+  console.warn('⚠️  GitHub OAuth not configured. Set GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET to enable.');
+}
+if (!process.env.GOOGLE_CLIENT_ID) {
+  console.warn('⚠️  Google OAuth not configured. Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET to enable.');
+}
 
 // Export the auth instance
 export const betterAuthInstance = auth;

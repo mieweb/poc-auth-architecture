@@ -77,22 +77,69 @@ All three authentication patterns are **fully implemented and tested**:
 - ✅ Protected API calls from all three clients
 - ✅ CORS for SPA direct API access
 - ✅ Session management with HttpOnly cookies
+- ✅ Better-auth integration for social sign-in and 2FA
+
+## 🌟 Enhanced Features (Better-Auth Integration)
+
+The auth-server now includes **Better Auth** integration, adding enterprise-grade authentication features:
+
+### Social Sign-in (Federated Identity)
+- **GitHub OAuth** - Sign in with GitHub accounts
+- **Google OAuth** - Sign in with Google accounts
+- Framework-agnostic implementation
+- Easy to extend with additional providers (Microsoft, Apple, etc.)
+
+### Two-Factor Authentication (2FA)
+- **TOTP** (Time-based One-Time Password) support
+- Compatible with authenticator apps (Google Authenticator, Authy, etc.)
+- Backup codes for account recovery
+- Per-user 2FA enrollment
+
+### Demo & Testing
+- **Interactive Demo**: Visit [http://localhost:4000/demo](http://localhost:4000/demo)
+- Test social sign-in flows
+- Explore 2FA setup process
+
+### API Endpoints
+Better Auth adds these endpoints under `/better-auth/*`:
+- `POST /better-auth/sign-up/email` - Email/password registration
+- `POST /better-auth/sign-in/email` - Email/password login
+- `GET /better-auth/sign-in/social` - Social provider OAuth flow
+- `GET /better-auth/session` - Get current session
+- `POST /better-auth/two-factor/enable` - Enable 2FA
+- `POST /better-auth/two-factor/verify` - Verify 2FA code
+
+### Configuration
+To enable social providers, set environment variables:
+```bash
+# GitHub OAuth App
+export GITHUB_CLIENT_ID="your_github_client_id"
+export GITHUB_CLIENT_SECRET="your_github_client_secret"
+
+# Google OAuth App
+export GOOGLE_CLIENT_ID="your_google_client_id"
+export GOOGLE_CLIENT_SECRET="your_google_client_secret"
+```
+
+**Note**: Social sign-in buttons will work but require valid OAuth app credentials from GitHub/Google.
 
 ## 🏗️ Architecture Overview
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                              OIDC Provider                                  │
-│                         http://localhost:4000                               │
-│                                                                             │
-│  • Issues JWT Access & ID Tokens                                            │
-│  • Supports Authorization Code + PKCE                                       │
-│  • 3 Registered Clients: app-bff, app-spa, app-web                          │
-└─────────────────────────────────────────────────────────────────────────────┘
-                                    │
-                    ┌───────────────┼───────────────┐
-                    │               │               │
-                    ▼               ▼               ▼
+┌──────────────────────────────────────────────────────────────────────────────────────┐
+│                         OIDC Provider + Better Auth                                  │
+│                            http://localhost:4000                                     │
+│                                                                                      │
+│  OIDC Provider:                        Better Auth:                                 │
+│  • Issues JWT Access & ID Tokens       • Social Sign-in (GitHub, Google)            │
+│  • Authorization Code + PKCE           • Two-Factor Authentication (2FA)            │
+│  • 3 Clients: app-bff, spa, web        • Framework-agnostic                         │
+│                                        • Email/password authentication               │
+└──────────────────────────────────────────────────────────────────────────────────────┘
+                                     │
+                     ┌───────────────┼───────────────┐
+                     │               │               │
+                     ▼               ▼               ▼
 ┌─────────────────────┐ ┌─────────────────────┐ ┌─────────────────────┐
 │     app-bff         │ │     app-spa         │ │     app-web         │
 │  :3000 (BFF)        │ │  :3001 (SPA)        │ │  :3002 (Trad.)      │
@@ -121,7 +168,7 @@ All three authentication patterns are **fully implemented and tested**:
 
 | Component | Port | Description |
 |-----------|------|-------------|
-| `auth-server` | 4000 | OIDC Provider using `oidc-provider` |
+| `auth-server` | 4000 | OIDC Provider + Better Auth (social sign-in, 2FA) |
 | `api-server` | 5001 | Protected Fastify API with JWT validation |
 | `app-bff` | 3000 | React + Node.js BFF (Backend-for-Frontend) |
 | `app-spa` | 3001 | Pure React SPA with PKCE |
@@ -274,6 +321,8 @@ cd app-web && npm run dev
 |---------|-----|
 | Auth Server Discovery | http://localhost:4000/.well-known/openid-configuration |
 | Auth Server JWKS | http://localhost:4000/jwks |
+| **Better Auth Demo** | **http://localhost:4000/demo** |
+| Better Auth API | http://localhost:4000/better-auth/* |
 | API Server | http://localhost:5001/api/data |
 | BFF App | http://localhost:3000 |
 | SPA App | http://localhost:3001 |

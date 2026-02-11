@@ -1,4 +1,8 @@
 import { generateKeyPair, exportJWK } from 'jose';
+import { interactionPolicy } from 'oidc-provider';
+
+// Get default policy and customize it
+const { Prompt, Check, base: defaultPolicy } = interactionPolicy;
 
 // Generate RSA key pair for signing tokens
 const { privateKey } = await generateKeyPair('RS256');
@@ -69,6 +73,12 @@ const BFF_URL = process.env.BFF_URL || 'http://localhost:3000';
 const SPA_URL = process.env.SPA_URL || 'http://localhost:3001';
 const WEB_URL = process.env.WEB_URL || 'http://localhost:3002';
 
+// Create custom interaction policy that doesn't require consent
+// Since we auto-approve first-party apps in loadExistingGrant, we only need login
+const policy = defaultPolicy();
+// Remove the consent prompt entirely - we handle consent in loadExistingGrant
+policy.remove('consent');
+
 export const configuration = {
   // Account lookup - required for oidc-provider to find user accounts
   findAccount: Account.findAccount,
@@ -122,6 +132,11 @@ export const configuration = {
 
   // Ensure profile/email claims are included in ID token
   conformIdTokenClaims: false,
+
+  // Custom interaction policy - only login, no consent prompt
+  interactions: {
+    policy,
+  },
 
   // Token configuration
   ttl: {

@@ -244,14 +244,106 @@ export const configuration = {
   // Allow localhost without HTTPS in dev
   renderError: async (ctx, out, error) => {
     console.error('OIDC Error:', error);
+    
+    // Determine user-friendly message based on error type
+    let userMessage = 'An unexpected error occurred during authentication.';
+    let suggestion = 'Please try again or contact support if the problem persists.';
+    
+    if (out.error === 'access_denied' || error.message?.includes('denied')) {
+      userMessage = 'Access was denied.';
+      suggestion = 'You may have cancelled the login or your credentials were invalid.';
+    } else if (out.error === 'invalid_request') {
+      userMessage = 'The authentication request was invalid.';
+      suggestion = 'Please start the login process again.';
+    } else if (out.error === 'server_error') {
+      userMessage = 'Unable to complete authentication.';
+      suggestion = 'Please check your credentials and try again.';
+    }
+    
+    // Try to extract the app's base URL from redirect_uri for a useful "go back" link
+    let returnUrl = null;
+    try {
+      const redirectUri = ctx.oidc?.params?.redirect_uri;
+      if (redirectUri) {
+        const url = new URL(redirectUri);
+        returnUrl = url.origin;
+      }
+    } catch (e) {
+      // Ignore URL parsing errors
+    }
+    
+    const returnButton = returnUrl 
+      ? `<a href="${returnUrl}" class="btn">Return to App</a>`
+      : `<button onclick="window.close()" class="btn">Close Window</button>`;
+    
     ctx.type = 'html';
     ctx.body = `<!DOCTYPE html>
 <html>
-<head><title>Error</title></head>
+<head>
+  <title>Authentication Error</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    .error-container {
+      background: white;
+      padding: 3rem;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      text-align: center;
+      max-width: 400px;
+    }
+    .error-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+    h1 {
+      color: #333;
+      margin: 0 0 1rem 0;
+      font-size: 1.5rem;
+    }
+    p {
+      color: #666;
+      margin: 0.5rem 0;
+      line-height: 1.5;
+    }
+    .suggestion {
+      color: #888;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+    }
+    .btn {
+      display: inline-block;
+      margin-top: 1.5rem;
+      padding: 0.75rem 2rem;
+      background: #667eea;
+      color: white;
+      text-decoration: none;
+      border: none;
+      border-radius: 6px;
+      font-weight: 500;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn:hover {
+      background: #5a6fd6;
+    }
+  </style>
+</head>
 <body>
-  <h1>OIDC Error</h1>
-  <pre>${JSON.stringify(out, null, 2)}</pre>
-  <p>${error.message || error}</p>
+  <div class="error-container">
+    <div class="error-icon">😕</div>
+    <h1>${userMessage}</h1>
+    <p class="suggestion">${suggestion}</p>
+    ${returnButton}
+  </div>
 </body>
 </html>`;
   },
